@@ -9,6 +9,8 @@ TagManager:
   - Healing Area
   - HealingArea
   - Sphere
+  - Door
+  - Projectile
   layers:
   - Default
   - TransparentFX
