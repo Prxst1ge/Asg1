@@ -8,6 +8,8 @@ public class InteractionController : MonoBehaviour
     [Header("Raycast Settings")]
     [SerializeField] Transform spawnPoint;
     [SerializeField] float interactionDistance = 5f;
+    public int totalCollected = 0;
+    public bool hasPowerCell = false;
 
     IInteractable currentTarget;
 
@@ -15,41 +17,55 @@ public class InteractionController : MonoBehaviour
     {
         Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.green);
 
-        // Raycast forward from spawnPoint
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out RaycastHit hit, interactionDistance))
         {
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 
-            // If looking at a new object
             if (interactable != null && interactable != currentTarget)
             {
-                // Unhighlight the old target
+                // Only unhighlight if the target still exists
                 if (currentTarget != null)
                 {
-                    currentTarget.Unhighlight();
+                    // prevent trying to access a destroyed object
+                    MonoBehaviour mono = currentTarget as MonoBehaviour;
+                    if (mono != null)
+                    {
+                        currentTarget.Unhighlight();
+                    }
                 }
 
-                // Set and highlight the new one
                 currentTarget = interactable;
                 currentTarget.Highlight();
             }
         }
         else
         {
-            // If not looking at anything interactable
             if (currentTarget != null)
             {
-                currentTarget.Unhighlight();
+                // prevent error after destroy
+                MonoBehaviour mono = currentTarget as MonoBehaviour;
+                if (mono != null)
+                {
+                    currentTarget.Unhighlight();
+                }
+
                 currentTarget = null;
             }
         }
     }
+
 
     public void OnInteract()
     {
         if (currentTarget != null)
         {
             currentTarget.Interact();
+            currentTarget = null; 
         }
     }
+    public void AddCollectible()
+{
+    totalCollected++;
+    Debug.Log("Collected: " + totalCollected);
+}
 }
