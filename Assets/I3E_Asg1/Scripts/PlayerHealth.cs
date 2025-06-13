@@ -60,6 +60,13 @@ public class PlayerHealth : MonoBehaviour
             transform.position = respawnPoint.position;
         }
     }
+   
+    // Returns the current health value (used by poison debug)
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
 }
 
 

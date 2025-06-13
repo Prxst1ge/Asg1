@@ -2,18 +2,18 @@ using UnityEngine;
 using System.Collections;
 
 /// <summary>
-/// Applies damage over time to the player while in the lava zone.
+/// Applies damage over time to the player while in the poison zone.
 /// </summary>
-public class LavaHazard : MonoBehaviour
+public class PoisonHazard : MonoBehaviour
 {
-    [SerializeField] private float damageAmount = 50f; // Total damage over time
-    [SerializeField] private float duration = 5f;       // Time to fully apply the damage
+    [SerializeField] private float damageAmount = 50f; // Total damage dealt
+    [SerializeField] private float duration = 5f;       // How long the poison lasts
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player touched lava!");
+            Debug.Log("Player entered poison zone!");
 
             PlayerHealth health = other.GetComponent<PlayerHealth>();
             if (health != null)
@@ -31,7 +31,7 @@ public class LavaHazard : MonoBehaviour
         while (amountDamaged < damageAmount && player != null)
         {
             player.TakeDamage(Mathf.RoundToInt(damagePerTick));
-            Debug.Log("Current HP: " + player.GetCurrentHealth());
+            Debug.Log("Current HP: " + player.GetCurrentHealth()); // Optional debug
             amountDamaged += damagePerTick;
             yield return new WaitForSeconds(1f);
         }
