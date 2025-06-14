@@ -6,6 +6,7 @@ using UnityEngine;
 public class PowerCellBehaviour : MonoBehaviour, IInteractable
 {
     private MeshRenderer myMeshRenderer; // Reference to this object's renderer
+    [SerializeField] private int score = 1; //can be used to give different scores
 
     [SerializeField]
     private Material highlightMat; // Material to use when the object is highlighted

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Instantly kills the player upon contact with the laser.
+/// Instantly kills the player unless they have the shield.
 /// </summary>
 public class LazerHazard : MonoBehaviour
 {
@@ -9,14 +9,24 @@ public class LazerHazard : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player hit by laser — instant death!");
+            InteractionController controller = FindObjectOfType<InteractionController>();
 
-            PlayerHealth health = other.GetComponent<PlayerHealth>();
-            if (health != null)
+            // If the player does NOT have a shield they will take fatal damage
+            if (controller != null && !controller.hasShield)
             {
-                health.TakeDamage(999); // Big enough to guarantee death
+                Debug.Log("Player hit by laser — no shield! Insta-death.");
+                PlayerHealth health = other.GetComponent<PlayerHealth>();
+                if (health != null)
+                {
+                    health.TakeDamage(999); // Instant kill
+                }
+            }
+            else
+            {
+                Debug.Log("Player passed through laser with shield!");
             }
         }
     }
 }
+
 

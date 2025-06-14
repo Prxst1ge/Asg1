@@ -6,7 +6,7 @@ using System.Collections;
 /// </summary>
 public class PoisonHazard : MonoBehaviour
 {
-    [SerializeField] private float damageAmount = 50f; // Total damage dealt
+    [SerializeField] private float damageAmount = 30f; // Total damage dealt
     [SerializeField] private float duration = 5f;       // How long the poison lasts
 
     private void OnTriggerEnter(Collider other)

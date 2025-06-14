@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 public class LavaSphereBehaviour : MonoBehaviour, IInteractable
 {
-    [SerializeField] private int value = 1; //can be used to give different scores
+    [SerializeField] private int score = 1; //can be used to give different scores
 
     private MeshRenderer myMeshRenderer; 
 

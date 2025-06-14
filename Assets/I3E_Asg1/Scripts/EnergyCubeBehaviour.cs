@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 public class EnergyCubeBehaviour : MonoBehaviour, IInteractable
 {
-    [SerializeField] private int value = 1; 
+    [SerializeField] private int score = 1; 
 
     private MeshRenderer myMeshRenderer; // Reference to this object's renderer
 

@@ -8,9 +8,13 @@ public class InteractionController : MonoBehaviour
     [Header("Raycast Settings")]
     [SerializeField] Transform spawnPoint; 
     [SerializeField] float interactionDistance = 5f; // How far the ray can reach
+    public int totalScore = 0; //Tracks the total score of the player
 
     public int totalCollected = 0; // Tracks how many collectibles the player has picked up
     public bool hasPowerCell = false; // Tracks whether the player has collected the Power Cell
+    public bool hasShield = false; // Tracks whether the player has collected the Shield
+    public bool hasKey = false; //Tracks whether the player has collected the Key
+
 
     IInteractable currentTarget; // The object the player is currently aiming at
 
@@ -78,6 +82,8 @@ public class InteractionController : MonoBehaviour
     public void AddCollectible()
     {
         totalCollected++;
-        Debug.Log("Collected: " + totalCollected);
+        totalScore++;
+        Debug.Log("Collected: " + totalCollected + " | Score: " + totalScore);
     }
+
 }
