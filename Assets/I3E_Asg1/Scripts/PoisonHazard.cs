@@ -1,3 +1,10 @@
+/*
+ * Author: Javier
+ * Date: 14 June 2025
+ * Description: This script applies damage over time (DOT) to the player while inside a poison zone.
+ *              Damage is dealt gradually using a coroutine over a defined duration.
+ */
+
 using UnityEngine;
 using System.Collections;
 
@@ -6,9 +13,13 @@ using System.Collections;
 /// </summary>
 public class PoisonHazard : MonoBehaviour
 {
-    [SerializeField] private float damageAmount = 30f; // Total damage dealt
-    [SerializeField] private float duration = 5f;       // How long the poison lasts
+    [SerializeField] private float damageAmount = 30f;  // Total amount of damage the poison does
+    [SerializeField] private float duration = 5f;       // How long it takes to apply all the poison damage
 
+    /// <summary>
+    /// Triggered when the player enters the poison trigger zone.
+    /// Starts the DOT coroutine if player is detected.
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -23,6 +34,9 @@ public class PoisonHazard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine that applies poison damage gradually over time.
+    /// </summary>
     IEnumerator DamageOverTimeCoroutine(PlayerHealth player, float damageAmount, float duration)
     {
         float amountDamaged = 0;
@@ -31,10 +45,10 @@ public class PoisonHazard : MonoBehaviour
         while (amountDamaged < damageAmount && player != null)
         {
             player.TakeDamage(Mathf.RoundToInt(damagePerTick));
-            Debug.Log("Current HP: " + player.GetCurrentHealth()); // Optional debug
             amountDamaged += damagePerTick;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f); // Waits 1 second between damage ticks
         }
     }
 }
+
 

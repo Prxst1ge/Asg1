@@ -1,3 +1,10 @@
+/*
+ * Author: Javier
+ * Date: 14 June 2025
+ * Description: Controls raycast-based interactions with objects in front of the player.
+ *              Tracks collectible progress and score.
+ */
+
 using UnityEngine;
 
 /// <summary>
@@ -6,33 +13,60 @@ using UnityEngine;
 public class InteractionController : MonoBehaviour
 {
     [Header("Raycast Settings")]
-    [SerializeField] Transform spawnPoint; 
-    [SerializeField] float interactionDistance = 5f; // How far the ray can reach
-    public int totalScore = 0; //Tracks the total score of the player
 
-    public int totalCollected = 0; // Tracks how many collectibles the player has picked up
-    public bool hasPowerCell = false; // Tracks whether the player has collected the Power Cell
-    public bool hasShield = false; // Tracks whether the player has collected the Shield
-    public bool hasKey = false; //Tracks whether the player has collected the Key
+    /// <summary>
+    /// The origin point from where the interaction ray is cast
+    /// </summary>
+    [SerializeField] Transform spawnPoint;
 
+    /// <summary>
+    /// The maximum distance the raycast can reach.
+    /// </summary>
+    [SerializeField] float interactionDistance = 5f;
 
-    IInteractable currentTarget; // The object the player is currently aiming at
+    /// <summary>
+    /// Tracks the player's total score.
+    /// </summary>
+    public int totalScore = 0;
 
+    /// <summary>
+    /// Number of collectibles the player has collected.
+    /// </summary>
+    public int totalCollected = 0;
+
+    /// <summary>
+    /// Whether the player has collected the Power Cell.
+    /// </summary>
+    public bool hasPowerCell = false;
+
+    /// <summary>
+    /// Whether the player has collected the Shield.
+    /// </summary>
+    public bool hasShield = false;
+
+    /// <summary>
+    /// Whether the player has collected the Key.
+    /// </summary>
+    public bool hasKey = false;
+
+    /// <summary>
+    /// The current object being looked at by the player.
+    /// </summary>
+    IInteractable currentTarget;
+
+    /// <summary>
+    /// Casts a ray every frame to check for interactable objects in front of the player.
+    /// </summary>
     void Update()
     {
-        // Draw a green ray in the Scene view for debugging
         Debug.DrawRay(spawnPoint.position, spawnPoint.forward * interactionDistance, Color.green);
 
-        // Cast a ray forward from the spawn point
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out RaycastHit hit, interactionDistance))
         {
-            // Check if the object hit by the ray has an IInteractable script
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 
-            // If looking at a new object
             if (interactable != null && interactable != currentTarget)
             {
-                // Unhighlight the previous object if it still exists
                 if (currentTarget != null)
                 {
                     MonoBehaviour mono = currentTarget as MonoBehaviour;
@@ -42,48 +76,43 @@ public class InteractionController : MonoBehaviour
                     }
                 }
 
-                // Set the new target and highlight it
                 currentTarget = interactable;
                 currentTarget.Highlight();
             }
         }
         else
         {
-            // If not looking at anything interactable
             if (currentTarget != null)
             {
-                // Unhighlight the current object if it hasn't been destroyed
                 MonoBehaviour mono = currentTarget as MonoBehaviour;
                 if (mono != null)
                 {
                     currentTarget.Unhighlight();
                 }
 
-                // Clear the current target
                 currentTarget = null;
             }
         }
     }
 
-    // Called when the player presses the Interact key
+    /// <summary>
+    /// Called when the player presses the Interact key (E). Triggers interaction with the current object.
+    /// </summary>
     public void OnInteract()
     {
         if (currentTarget != null)
         {
-            // Trigger the object's interaction method
             currentTarget.Interact();
-
-            // Clear the target (useful if the object gets destroyed)
             currentTarget = null;
         }
     }
 
-    // Called by collectibles when collected
+    /// <summary>
+    /// Adds to the collectible count when a collectible is collected.
+    /// </summary>
     public void AddCollectible()
     {
         totalCollected++;
-        totalScore++;
         Debug.Log("Collected: " + totalCollected + " | Score: " + totalScore);
     }
-
 }

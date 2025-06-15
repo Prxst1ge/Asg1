@@ -1,57 +1,84 @@
+/*
+ * Author: Javier
+ * Date: 14 June 2025
+ * Description: Represents a collectible Lava Sphere object that increases the player's collectible count and score when interacted with.
+ */
+
 using UnityEngine;
 
 /// <summary>
-/// Collectible Lava Sphere that adds to the collectible count when interacted with.
+/// Collectible Lava Sphere that adds to the collectible count and score when interacted with.
 /// </summary>
 public class LavaSphereBehaviour : MonoBehaviour, IInteractable
 {
-    [SerializeField] private int score = 1; //can be used to give different scores
+    /// <summary>
+    /// Score value this Lava Sphere contributes when collected.
+    /// </summary>
+    [SerializeField] private int score = 1;
 
-    private MeshRenderer myMeshRenderer; 
+    /// <summary>
+    /// Sound effect to play when the sphere is collected.
+    /// </summary>
+    [SerializeField] private AudioClip pickupSFX;
 
-    [SerializeField]
-    private Material highlightMat; // Material used to highlight the sphere when looked at
+    /// <summary>
+    /// Reference to this object's MeshRenderer.
+    /// </summary>
+    private MeshRenderer myMeshRenderer;
 
-    private Material originalMat; // Stores the original material of the sphere
+    /// <summary>
+    /// Material used to visually highlight this object when targeted.
+    /// </summary>
+    [SerializeField] private Material highlightMat;
 
+    /// <summary>
+    /// Stores the original material before highlighting.
+    /// </summary>
+    private Material originalMat;
+
+    /// <summary>
+    /// Called on start. Stores the mesh renderer and original material.
+    /// </summary>
     void Start()
     {
-        // Get the MeshRenderer component on this GameObject
         myMeshRenderer = GetComponent<MeshRenderer>();
-
-        // Store the original material to restore later
         originalMat = myMeshRenderer.material;
     }
 
-    // Called when the player is looking at this object
+    /// <summary>
+    /// Called when the player looks at this object. Changes the material to highlight.
+    /// </summary>
     public void Highlight()
     {
-        // Change the material to the highlight version
         myMeshRenderer.material = highlightMat;
     }
 
-    // Called when the player looks away from this object
+    /// <summary>
+    /// Called when the player stops looking at this object. Restores the original material.
+    /// </summary>
     public void Unhighlight()
     {
-        // Restore the original material
         myMeshRenderer.material = originalMat;
     }
 
-    // Called when the player interacts with this object
+    /// <summary>
+    /// Called when the player interacts with the Lava Sphere.
+    /// Adds to the player's collectible count and score, plays a sound, and destroys the object.
+    /// </summary>
     public void Interact()
     {
-        Debug.Log("Lava Sphere Interacted!");
+        InteractionController controller = FindObjectOfType<InteractionController>();
+        if (controller != null)
+        {
+            controller.AddCollectible();
+            controller.totalScore += score;
+        }
 
-        // Remove the highlight before destroying the object
-        Unhighlight();
-
-        // Increase the player's collectible count
-        FindObjectOfType<InteractionController>().AddCollectible();
-
-        // Destroy the object from the scene
+        AudioSource.PlayClipAtPoint(pickupSFX, transform.position);
         Destroy(gameObject);
     }
 }
+
 
 
 

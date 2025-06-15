@@ -1,57 +1,70 @@
+/*
+ * Author: Javier
+ * Date: 14 June 2025
+ * Description: Power Cell collectible that can only be picked up after all other collectibles are collected.
+ *              Increases score and plays a sound upon interaction.
+ */
+
 using UnityEngine;
 
 /// <summary>
-/// Power Cell that can only be collected once all collectibles are found.
+/// Power Cell that can only be collected once 9 collectibles are found.
 /// </summary>
 public class PowerCellBehaviour : MonoBehaviour, IInteractable
 {
-    private MeshRenderer myMeshRenderer; // Reference to this object's renderer
-    [SerializeField] private int score = 1; //can be used to give different scores
+    private MeshRenderer myMeshRenderer; 
+
+    [SerializeField] private int score = 1; // Score value for this object
+    [SerializeField] private AudioClip sfxClip; // Sound to play when collected
 
     [SerializeField]
-    private Material highlightMat; // Material to use when the object is highlighted
+    private Material highlightMat; // Material to use when highlighted
 
-    private Material originalMat; // Original material (for unhighlighting)
+    private Material originalMat; // Original material to restore after highlight
 
+    /// <summary>
+    /// Called when the object starts. Caches renderer and material.
+    /// </summary>
     void Start()
     {
-        // Get the MeshRenderer on this GameObject
         myMeshRenderer = GetComponent<MeshRenderer>();
-
-        // Store the original material
         originalMat = myMeshRenderer.material;
     }
 
-    // Called when the player looks at the object
+    /// <summary>
+    /// Highlights the object by changing its material.
+    /// </summary>
     public void Highlight()
     {
-        // Change the material to the highlight material
         myMeshRenderer.material = highlightMat;
     }
 
-    // Called when the player looks away
+    /// <summary>
+    /// Removes highlight and restores original material.
+    /// </summary>
     public void Unhighlight()
     {
-        // Restore the original material
         myMeshRenderer.material = originalMat;
     }
 
-    // Called when the player presses interact while aiming at this object
+    /// <summary>
+    /// Only allows interaction if 9 collectibles have been collected.
+    /// Increases score, finds that possess the item, and plays SFX.
+    /// </summary>
     public void Interact()
     {
-        // Find the InteractionController to access the collectible count
         InteractionController controller = FindObjectOfType<InteractionController>();
 
-        // Only allow collection if the player has collected 9 items
         if (controller.totalCollected >= 9)
         {
             Debug.Log("Power Cell Collected!");
 
-            // Remove highlight and mark power cell as collected
             Unhighlight();
             controller.hasPowerCell = true;
+            controller.AddCollectible();
+            controller.totalScore += score;
 
-            // Remove the power cell from the scene
+            AudioSource.PlayClipAtPoint(sfxClip, transform.position);
             Destroy(gameObject);
         }
         else
@@ -60,5 +73,6 @@ public class PowerCellBehaviour : MonoBehaviour, IInteractable
         }
     }
 }
+
 
 

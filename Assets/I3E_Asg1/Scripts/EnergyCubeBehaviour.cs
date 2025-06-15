@@ -1,3 +1,10 @@
+/*
+ * Author: Javier
+ * Date: 14 June 2025
+ * Description: Energy Cube collectible that increases the player's collectible count and score
+ *              upon interaction.
+ */
+
 using UnityEngine;
 
 /// <summary>
@@ -5,7 +12,8 @@ using UnityEngine;
 /// </summary>
 public class EnergyCubeBehaviour : MonoBehaviour, IInteractable
 {
-    [SerializeField] private int score = 1; 
+    [SerializeField] private int score = 1; // Score value for this cube
+    [SerializeField] private AudioClip sfxClip; // Sound to play when collected
 
     private MeshRenderer myMeshRenderer; // Reference to this object's renderer
 
@@ -14,6 +22,10 @@ public class EnergyCubeBehaviour : MonoBehaviour, IInteractable
 
     private Material originalMat; // Stores the default material
 
+    /// <summary>
+    /// Called when the object is first created.
+    /// Stores original material and gets renderer.
+    /// </summary>
     void Start()
     {
         // Get the MeshRenderer component attached to this object
@@ -23,32 +35,46 @@ public class EnergyCubeBehaviour : MonoBehaviour, IInteractable
         originalMat = myMeshRenderer.material;
     }
 
-    // Called when the player looks at the object
+    /// <summary>
+    /// Called when the player looks at the object.
+    /// Changes the material to highlight.
+    /// </summary>
     public void Highlight()
     {
-        // Change to highlight material
         myMeshRenderer.material = highlightMat;
     }
 
-    // Called when the player looks away
+    /// <summary>
+    /// Called when the player looks away.
+    /// Resets to the original material.
+    /// </summary>
     public void Unhighlight()
     {
-        // Restore the original material
         myMeshRenderer.material = originalMat;
     }
 
-    // Called when the player interacts with this object
+    /// <summary>
+    /// Called when the player interacts with the cube.
+    /// Increases score and collectible count, plays sound, and destroys itself.
+    /// </summary>
     public void Interact()
     {
         Debug.Log("Energy Cube Collected!");
 
-        // Unhighlight before destroying
         Unhighlight();
 
-        // Increase collectible count using InteractionController
-        FindObjectOfType<InteractionController>().AddCollectible();
+        // Add to collectible and score
+        InteractionController controller = FindObjectOfType<InteractionController>();
+        if (controller != null)
+        {
+            controller.AddCollectible();
+            controller.totalScore += score;
+        }
 
-        // Remove the object from the scene
+        // Play pickup sound
+        AudioSource.PlayClipAtPoint(sfxClip, transform.position);
+
+        // Destroy object
         Destroy(gameObject);
     }
 }
